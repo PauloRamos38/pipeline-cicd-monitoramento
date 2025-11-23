@@ -1,0 +1,110 @@
+body {
+}
+<!doctype html>
+<html lang="pt-BR">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Camiseta Modo Programador - Estilo Dev</title>
+	<meta name="description" content="Detalhes da Camiseta 'Code Mode', perfeita para suas sessões de codificação.">
+	<link rel="icon" href="favicon.svg" type="image/svg+xml">
+	<style>
+		:root{--bg:#0f1724;--card:#0b1220;--muted:#9aa4b2;--accent:#06b6d4;--glass:rgba(255,255,255,0.04)}
+		*{box-sizing:border-box}
+		html,body{height:100%;margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial;color:#e6eef6;background:linear-gradient(180deg,#071029 0%,#081224 60%)}
+		.container{max-width:980px;margin:28px auto;padding:20px}
+		header{display:flex;align-items:center;justify-content:space-between;gap:16px}
+		.brand{display:flex;align-items:center;gap:12px}
+		.logo{width:48px;height:48px;border-radius:10px;background:linear-gradient(135deg,var(--accent),#7c3aed);display:flex;align-items:center;justify-content:center;font-weight:700;color:#042028}
+		h1{font-size:1.35rem;margin:0}
+		p.lead{color:var(--muted);margin:6px 0 18px;font-size:0.95rem}
+		nav a{color:var(--muted);text-decoration:none;margin-left:14px}
+		.cta{display:inline-block;width:100%;text-align:center;margin-top:12px;padding:10px 14px;background:var(--accent);color:#012;border-radius:8px;text-decoration:none;font-weight:600}
+		footer{margin-top:26px;text-align:center;color:var(--muted);font-size:0.9rem}
+		
+		/* Estilos da página de produto */
+		.product-detail {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			gap: 28px;
+			background: var(--card);
+			padding: 24px;
+			border-radius: 12px;
+			margin-top: 20px;
+		}
+		.product-detail img {
+			width: 100%;
+			border-radius: 8px;
+			background-color: #071029;
+		}
+		.product-info h2 {
+			margin: 0 0 10px;
+			font-size: 1.8rem;
+			color: #fff;
+		}
+		.product-info .price {
+			font-size: 1.5rem;
+			color: var(--accent);
+			font-weight: 600;
+			margin: 16px 0;
+		}
+		.product-info p {
+			color: var(--muted);
+			line-height: 1.6;
+		}
+		.product-options label {
+			display: block;
+			font-size: 0.9rem;
+			color: var(--muted);
+			margin: 16px 0 8px;
+		}
+		.product-options select {
+			width: 100%;
+			padding: 10px;
+			border-radius: 8px;
+			border: 1px solid rgba(255,255,255,0.1);
+			background: #0f1724;
+			color: inherit;
+			font-size: 1rem;
+		}
+		.cta.add-to-cart { margin-top: 24px; background: #10b981; color: #fff; }
+
+		@media (max-width: 768px) {
+			.product-detail { grid-template-columns: 1fr; }
+		}
+	</style>
+</head>
+<body>
+	<div class="container">
+		<header>
+			<div class="brand">
+				<div class="logo">ED</div>
+				<h1>Estilo Dev</h1>
+			</div>
+			<nav>
+				<a href="produtos.html">Voltar aos Produtos</a>
+			</nav>
+		</header>
+
+		<main class="product-detail">
+			<div class="product-image">
+				<img src="imagens/camiseta-code-mode.jpg" alt="Camiseta Code Mode em detalhe">
+			</div>
+			<div class="product-info">
+				<h2>Camiseta Modo Programador</h2>
+				<p>Feita com 100% algodão de fio penteado, esta camiseta oferece o máximo de conforto para longas horas de trabalho ou para relaxar. A estampa minimalista "Code Mode" é um aceno sutil para sua paixão pela programação.</p>
+				<div class="price">R$ 89,90</div>
+				<div class="product-options">
+					<label for="tamanho">Tamanho:</label>
+					<select id="tamanho" name="tamanho">
+						<option>P</option><option>M</option><option>G</option><option>GG</option>
+					</select>
+				</div>
+				<a href="#" class="cta add-to-cart">Adicionar ao Carrinho</a>
+			</div>
+		</main>
+
+		<footer>© 2024 — Projeto E-commerce. Criado com base na Imersão Alura.</footer>
+	</div>
+</body>
+</html>
