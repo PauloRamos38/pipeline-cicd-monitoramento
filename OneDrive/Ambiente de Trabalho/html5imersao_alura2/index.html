@@ -5,8 +5,8 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Projeto: E-commerce de Roupas</title>
 	<meta name="description" content="Página de projeto para um e-commerce de roupas, baseado na Imersão Alura.">
-	<link rel="icon" href="favicon.svg" type="image/svg+xml">
-	<link rel="stylesheet" href="estilos.css">
+	<link rel="icon" href="./favicon.svg" type="image/svg+xml">
+	<link rel="stylesheet" href="./estilos.css">
 </head>
 <body>
 	<div class="container">
@@ -19,8 +19,8 @@
 				</div>
 			</div>
 			<nav>
-				<a href="produtos.html">Produtos</a>
-				<a href="produtos.html">Contato</a>
+				<a href="./produtos.html">Produtos</a>
+				<a href="./produtos.html">Contato</a>
 			</nav>
 		</header>
 
@@ -73,13 +73,37 @@
 				</div>
 				<div class="feature">
 					<h3>Node.js / Express</h3>
-					<p>Servidor de desenvolvimento e base para futuras APIs e integrações.</p>
+					<p>Planejado para o servidor, futuras APIs e integrações.</p>
 				</div>
+			</div>
+		</section>
+
+		<section style="margin-top: 20px;">
+			<h2>Exemplo de Código do Servidor (Node.js)</h2>
+			<p class="lead" style="margin-bottom: 14px;">Este é um exemplo de como o servidor backend seria implementado com Node.js e Express para servir as páginas do projeto.</p>
+			<div class="code-block">
+				<pre><code>
+const express = require('express');
+const path = require('path');
+const app = express();
+const PORT = 3000;
+
+// Serve os arquivos estáticos da pasta principal
+app.use(express.static(path.join(__dirname, '/')));
+
+app.listen(PORT, () => console.log(`Servidor rodando na porta ${PORT}`));
+				</code></pre>
 			</div>
 		</section>
 
 		<footer id="contato">© 2024 — Projeto E-commerce. Criado com base na Imersão Alura.</footer>
 	</div>
-	<script src="app.js"></script>
+	<script src="./app.js"></script>
+
+	<!-- Script do Google Maps com a sua Chave de API -->
+	<!-- Substitua SUA_CHAVE_API_AQUI pela sua chave real se for diferente -->
+	<script async
+		src="https://maps.googleapis.com/maps/api/js?key=SUA_CHAVE_API_AQUI&callback=initMap">
+	</script>
 </body>
 </html>

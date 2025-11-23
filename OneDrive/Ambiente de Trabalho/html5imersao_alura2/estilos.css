@@ -30,6 +30,24 @@ input[type=text],input[type=email],textarea{width:100%;padding:10px;border-radiu
 .project-description ul { list-style-type: '✓ '; padding-left: 20px; color: var(--muted); }
 .project-description li { margin-bottom: 8px; }
 
+/* Estilos para o Bloco de Código (index.html) */
+.code-block {
+	background: var(--card);
+	border-radius: 12px;
+	padding: 18px;
+	font-family: 'Courier New', Courier, monospace;
+	font-size: 0.9rem;
+	overflow-x: auto; /* Adiciona barra de rolagem se o código for muito largo */
+}
+
+/* Estilos para o Mapa (index.html) */
+#map {
+	height: 300px;
+	width: 100%;
+	border-radius: 12px;
+	margin-top: 20px;
+}
+
 /* Página de Produtos (produtos.html) */
 .product-card{background:linear-gradient(180deg,var(--glass),transparent);padding:14px;border-radius:10px;border:1px solid rgba(255,255,255,0.03); text-align: center;}
 .product-card img { max-width: 100%; border-radius: 8px; aspect-ratio: 1 / 1; object-fit: contain; margin-bottom: 12px; background-color: #071029; }

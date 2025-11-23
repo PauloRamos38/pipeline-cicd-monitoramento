@@ -33,3 +33,16 @@ document.addEventListener('DOMContentLoaded', function() {
 		});
 	}
 });
+
+// --- Função para iniciar o Google Map (index.html) ---
+// Esta função é chamada pelo script do Google Maps quando ele termina de carregar
+function initMap() {
+	// Coordenadas de exemplo (Avenida Paulista, São Paulo)
+	const location = { lat: -23.561, lng: -46.656 };
+	
+	// Cria o mapa, centralizado na localização definida
+	const map = new google.maps.Map(document.getElementById("map"), {
+		zoom: 15,
+		center: location,
+	});
+}
