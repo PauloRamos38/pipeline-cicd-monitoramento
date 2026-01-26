@@ -1,0 +1,90 @@
+<!-- correções de bugs e melhorias de desempenho -->
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Projeto: E-commerce de Roupas</title>
+	<meta name="description" content="Página de projeto para um e-commerce de roupas, baseado na Imersão Alura.">
+	<link rel="icon" href="./favicon.svg" type="image/svg+xml">
+	<link rel="stylesheet" href="./estilos.css">
+</head>
+<body>
+	<div class="container">
+		<header>
+			<div class="brand">
+				<div class="logo">ED</div>
+				<div>
+					<h1>Estilo Dev</h1>
+					<p class="lead">A loja de roupas para apaixonados por código.</p>
+				</div>
+			</div>
+			<nav>
+				<a href="./produtos.html">Produtos</a>
+				<a href="./produtos.html">Contato</a>
+			</nav>
+		</header>
+
+		<main class="hero">
+			<div class="card">
+				<h2>Loja de Roupas "Estilo Dev"</h2>
+				<p class="lead">O objetivo é construir uma loja virtual completa, focada em moda para desenvolvedores.</p>
+				
+				<div class="project-description">
+					<h3>Funcionalidades Principais:</h3>
+					<ul>
+						<li>Página inicial com produtos em destaque.</li>
+						<li>Página de catálogo com filtros (categoria, tamanho, cor).</li>
+						<li>Página de detalhes do produto.</li>
+						<li>Carrinho de compras funcional.</li>
+						<li>Formulário de checkout (simulado).</li>
+					</ul>
+				</div>
+			</div>
+
+			<div class="card">
+				<h2>Entre em Contato</h2>
+				<form id="contactForm">
+					<label for="nome">Nome</label>
+					<input id="nome" name="nome" type="text" placeholder="Seu nome" required>
+					<label for="email">Email</label>
+					<input id="email" name="email" type="email" placeholder="seu@email.com" required>
+					<label for="mensagem">Mensagem</label>
+					<textarea id="mensagem" name="mensagem" rows="4" placeholder="Deixe um comentário ou sugestão!"></textarea>
+					<button type="submit" class="cta">Enviar</button>
+				</form>
+			</div>
+		</main>
+
+		<section class="tecnologias">
+			<h2>Tecnologias Utilizadas</h2>
+			<p class="lead">Para construir este projeto, usaremos as seguintes tecnologias e ferramentas:</p>
+			<div class="cards">
+				<div class="feature">
+					<h3>HTML5</h3>
+					<p>Estrutura semântica e moderna para todo o conteúdo do site.</p>
+				</div>
+				<div class="feature">
+					<h3>CSS3</h3>
+					<p>Estilização avançada com Flexbox, Grid e variáveis para um design responsivo.</p>
+				</div>
+				<div class="feature">
+					<h3>JavaScript (ES6+)</h3>
+					<p>Interatividade no lado do cliente e lógica para o carrinho de compras.</p>
+				</div>
+				<div class="feature">
+					<h3>Node.js / Express</h3>
+					<p>Planejado para o servidor, futuras APIs e integrações.</p>
+				</div>
+			</div>
+		</section>
+
+		<footer id="contato">© 2024 — Projeto E-commerce. Criado com base na Imersão Alura.</footer>
+
+		<!-- O mapa será carregado aqui pelo app.js -->
+		<div id="map"></div>
+	</div>
+	<script src="./config.js"></script>
+	<script src="./app.js"></script>
+</body>
+</html>
