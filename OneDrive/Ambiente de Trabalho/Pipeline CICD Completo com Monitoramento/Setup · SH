@@ -1,0 +1,89 @@
+#!/bin/bash
+
+# Script de setup inicial do projeto DevOps
+
+set -e
+
+echo "========================================"
+echo "  Setup Inicial - Projeto DevOps"
+echo "========================================"
+echo ""
+
+# Cores
+GREEN='\033[0;32m'
+BLUE='\033[0;34m'
+RED='\033[0;31m'
+YELLOW='\033[1;33m'
+NC='\033[0m'
+
+# Função para verificar se um comando existe
+command_exists() {
+    command -v "$1" >/dev/null 2>&1
+}
+
+# Verificar pré-requisitos
+echo -e "${BLUE}Verificando pré-requisitos...${NC}"
+
+if ! command_exists python3; then
+    echo -e "${RED}❌ Python 3 não encontrado. Por favor, instale Python 3.11+${NC}"
+    exit 1
+else
+    echo -e "${GREEN}✓ Python 3 encontrado${NC}"
+fi
+
+if ! command_exists docker; then
+    echo -e "${RED}❌ Docker não encontrado. Por favor, instale Docker${NC}"
+    exit 1
+else
+    echo -e "${GREEN}✓ Docker encontrado${NC}"
+fi
+
+if ! command_exists kubectl; then
+    echo -e "${YELLOW}⚠ kubectl não encontrado. Instalando...${NC}"
+    # Instruções para instalar kubectl
+    echo "Por favor, instale kubectl: https://kubernetes.io/docs/tasks/tools/"
+else
+    echo -e "${GREEN}✓ kubectl encontrado${NC}"
+fi
+
+if ! command_exists minikube; then
+    echo -e "${YELLOW}⚠ Minikube não encontrado. Instalando...${NC}"
+    echo "Por favor, instale Minikube: https://minikube.sigs.k8s.io/docs/start/"
+else
+    echo -e "${GREEN}✓ Minikube encontrado${NC}"
+fi
+
+echo ""
+echo -e "${BLUE}Criando ambiente virtual Python...${NC}"
+python3 -m venv venv
+echo -e "${GREEN}✓ Ambiente virtual criado${NC}"
+
+echo ""
+echo -e "${BLUE}Ativando ambiente virtual...${NC}"
+source venv/bin/activate
+echo -e "${GREEN}✓ Ambiente virtual ativado${NC}"
+
+echo ""
+echo -e "${BLUE}Instalando dependências Python...${NC}"
+pip install --upgrade pip
+pip install -r app/requirements.txt
+echo -e "${GREEN}✓ Dependências instaladas${NC}"
+
+echo ""
+echo -e "${BLUE}Executando testes...${NC}"
+cd app && pytest tests/ -v
+cd ..
+echo -e "${GREEN}✓ Testes executados com sucesso${NC}"
+
+echo ""
+echo "========================================"
+echo -e "${GREEN}Setup concluído com sucesso!${NC}"
+echo "========================================"
+echo ""
+echo "Próximos passos:"
+echo "1. Ativar o ambiente virtual: source venv/bin/activate"
+echo "2. Executar a aplicação localmente: make run"
+echo "3. Ou com Docker: make docker-run"
+echo "4. Ou com Kubernetes: make minikube-start && make k8s-deploy"
+echo ""
+echo "Para ver todos os comandos disponíveis: make help"

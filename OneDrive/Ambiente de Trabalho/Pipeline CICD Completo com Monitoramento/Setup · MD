@@ -1,0 +1,293 @@
+# 🚀 Guia de Setup - Projeto DevOps
+
+## Pré-requisitos
+
+Antes de começar, você precisa ter instalado:
+
+- Python 3.11+
+- Docker e Docker Compose
+- Kubectl
+- Minikube (para rodar Kubernetes localmente)
+- Git
+- Make (opcional, mas recomendado)
+
+## 📦 Instalação
+
+### 1. Clone o repositório
+
+```bash
+git clone https://github.com/seu-usuario/devops-project.git
+cd devops-project
+```
+
+### 2. Instalação de dependências Python
+
+```bash
+# Criar ambiente virtual (recomendado)
+python -m venv venv
+
+# Ativar ambiente virtual
+# No Linux/Mac:
+source venv/bin/activate
+# No Windows:
+venv\Scripts\activate
+
+# Instalar dependências
+pip install -r app/requirements.txt
+```
+
+## 🧪 Executando os Testes
+
+```bash
+# Com Make
+make test
+
+# Sem Make
+cd app
+pytest tests/ -v --cov=. --cov-report=html
+```
+
+Os relatórios de cobertura estarão em `app/htmlcov/index.html`
+
+## 🐳 Executando com Docker
+
+### Opção 1: Docker Compose (Recomendado para desenvolvimento)
+
+```bash
+# Com Make
+make docker-run
+
+# Sem Make
+cd docker
+docker-compose up -d
+```
+
+Serviços disponíveis:
+- **Aplicação**: http://localhost:5000
+- **Prometheus**: http://localhost:9090
+- **Grafana**: http://localhost:3000 (admin/admin)
+
+Para ver os logs:
+```bash
+make docker-logs
+# ou
+cd docker && docker-compose logs -f
+```
+
+Para parar:
+```bash
+make docker-stop
+# ou
+cd docker && docker-compose down
+```
+
+### Opção 2: Build manual da imagem
+
+```bash
+# Build
+make docker-build
+# ou
+docker build -t devops-app:latest -f docker/Dockerfile .
+
+# Run
+docker run -p 5000:5000 devops-app:latest
+```
+
+## ☸️ Executando no Kubernetes (Minikube)
+
+### 1. Iniciar o Minikube
+
+```bash
+# Com Make
+make minikube-start
+
+# Sem Make
+minikube start --driver=docker --cpus=4 --memory=8192
+```
+
+### 2. Build da imagem no Minikube
+
+```bash
+# Configurar Docker para usar o daemon do Minikube
+eval $(minikube docker-env)
+
+# Build da imagem
+docker build -t devops-app:latest -f docker/Dockerfile .
+```
+
+### 3. Deploy da aplicação
+
+```bash
+# Com Make
+make k8s-deploy
+
+# Sem Make
+kubectl apply -f k8s/configmap.yaml
+kubectl apply -f k8s/deployment.yaml
+kubectl apply -f k8s/service.yaml
+kubectl apply -f k8s/hpa.yaml
+```
+
+### 4. Verificar o status
+
+```bash
+# Com Make
+make k8s-status
+
+# Sem Make
+kubectl get pods,svc,deployments
+```
+
+### 5. Deploy do Monitoramento
+
+```bash
+# Com Make
+make monitoring
+
+# Sem Make
+kubectl apply -f monitoring/prometheus-deployment.yaml
+kubectl apply -f monitoring/grafana-deployment.yaml
+```
+
+### 6. Acessar os serviços
+
+```bash
+# Com Make (port-forward automático)
+make port-forward
+
+# Sem Make (executar cada comando em um terminal separado)
+kubectl port-forward svc/devops-app-service 5000:80
+kubectl port-forward svc/prometheus 9090:9090
+kubectl port-forward svc/grafana 3000:3000
+```
+
+**OU** usando Minikube service:
+
+```bash
+minikube service devops-app-service
+minikube service prometheus --url
+minikube service grafana --url
+```
+
+## 📊 Acessando o Grafana
+
+1. Acesse: http://localhost:3000
+2. Login: `admin` / `admin`
+3. Vá em Configuration > Data Sources
+4. O Prometheus já estará configurado
+5. Crie dashboards customizados ou importe dashboards prontos
+
+## 🧹 Limpeza
+
+### Parar e remover containers Docker
+
+```bash
+make docker-stop
+```
+
+### Remover recursos do Kubernetes
+
+```bash
+make k8s-delete
+make monitoring-delete
+```
+
+### Parar o Minikube
+
+```bash
+make minikube-stop
+```
+
+### Deletar o cluster Minikube
+
+```bash
+make minikube-delete
+```
+
+## 🔧 Comandos Úteis
+
+### Ver todos os comandos disponíveis
+
+```bash
+make help
+```
+
+### Verificar logs da aplicação no Kubernetes
+
+```bash
+kubectl logs -f deployment/devops-app
+```
+
+### Escalar a aplicação
+
+```bash
+kubectl scale deployment/devops-app --replicas=5
+```
+
+### Ver métricas do HPA
+
+```bash
+kubectl get hpa
+```
+
+### Executar um teste de carga
+
+```bash
+# Instalar hey (ferramenta de load testing)
+# Linux/Mac:
+go install github.com/rakyll/hey@latest
+
+# Executar teste
+hey -z 30s -c 50 http://localhost:5000/
+```
+
+## 🐛 Troubleshooting
+
+### Problema: Pods não estão rodando
+
+```bash
+# Verificar status
+kubectl describe pod <pod-name>
+
+# Ver logs
+kubectl logs <pod-name>
+```
+
+### Problema: Imagem não encontrada no Minikube
+
+```bash
+# Certificar-se de estar usando o Docker do Minikube
+eval $(minikube docker-env)
+
+# Rebuild da imagem
+docker build -t devops-app:latest -f docker/Dockerfile .
+```
+
+### Problema: Portas já em uso
+
+```bash
+# Verificar processos usando a porta
+lsof -i :5000
+# ou no Windows
+netstat -ano | findstr :5000
+
+# Matar o processo ou usar outra porta
+```
+
+## 📚 Próximos Passos
+
+1. ✅ Configure o GitHub Actions (já está no `.github/workflows/`)
+2. ✅ Adicione mais testes
+3. ✅ Crie dashboards customizados no Grafana
+4. ✅ Implemente alertas no Prometheus
+5. ✅ Adicione mais endpoints na API
+6. ✅ Configure SSL/TLS
+7. ✅ Implemente autenticação JWT
+8. ✅ Adicione um banco de dados (PostgreSQL/MongoDB)
+
+## 📞 Suporte
+
+Se tiver problemas, verifique:
+- A documentação oficial do Kubernetes
+- Os logs dos containers/pods
+- Issues no GitHub do projeto

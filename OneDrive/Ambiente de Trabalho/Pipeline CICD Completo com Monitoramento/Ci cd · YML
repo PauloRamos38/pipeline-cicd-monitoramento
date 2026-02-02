@@ -1,0 +1,129 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  DOCKER_IMAGE: devops-app
+  DOCKER_TAG: ${{ github.sha }}
+
+jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r app/requirements.txt
+    
+    - name: Run tests
+      run: |
+        cd app
+        pytest tests/ -v --cov=. --cov-report=xml --cov-report=html
+    
+    - name: Upload coverage reports
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./app/coverage.xml
+        flags: unittests
+        name: codecov-umbrella
+
+  lint:
+    name: Code Quality
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install flake8 black pylint
+    
+    - name: Run flake8
+      run: flake8 app/ --count --select=E9,F63,F7,F82 --show-source --statistics
+    
+    - name: Check code formatting with black
+      run: black --check app/
+
+  build:
+    name: Build Docker Image
+    runs-on: ubuntu-latest
+    needs: [test, lint]
+    if: github.event_name == 'push'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+    
+    - name: Build Docker image
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        file: ./docker/Dockerfile
+        push: false
+        tags: ${{ env.DOCKER_IMAGE }}:${{ env.DOCKER_TAG }},${{ env.DOCKER_IMAGE }}:latest
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+    
+    - name: Run Trivy vulnerability scanner
+      uses: aquasecurity/trivy-action@master
+      with:
+        image-ref: ${{ env.DOCKER_IMAGE }}:${{ env.DOCKER_TAG }}
+        format: 'sarif'
+        output: 'trivy-results.sarif'
+    
+    - name: Upload Trivy results to GitHub Security
+      uses: github/codeql-action/upload-sarif@v2
+      if: always()
+      with:
+        sarif_file: 'trivy-results.sarif'
+
+  deploy:
+    name: Deploy to Kubernetes
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Deploy notification
+      run: |
+        echo "Deploying version ${{ env.DOCKER_TAG }} to Kubernetes"
+        echo "This step would typically update K8s manifests and apply them"
+    
+    # Uncomment when you have a real cluster
+    # - name: Configure kubectl
+    #   uses: azure/k8s-set-context@v3
+    #   with:
+    #     method: kubeconfig
+    #     kubeconfig: ${{ secrets.KUBE_CONFIG }}
+    
+    # - name: Deploy to Kubernetes
+    #   run: |
+    #     kubectl set image deployment/devops-app app=${{ env.DOCKER_IMAGE }}:${{ env.DOCKER_TAG }}
+    #     kubectl rollout status deployment/devops-app

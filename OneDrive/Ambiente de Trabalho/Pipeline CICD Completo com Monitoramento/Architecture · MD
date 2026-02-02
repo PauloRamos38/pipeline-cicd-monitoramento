@@ -1,0 +1,212 @@
+# 🏗️ Decisões de Arquitetura
+
+## Visão Geral
+
+Este documento explica as decisões de arquitetura tomadas no projeto e o raciocínio por trás delas.
+
+## 1. Escolha da Aplicação (Flask)
+
+**Decisão:** Usar Flask para a API REST
+
+**Razões:**
+- ✅ Framework leve e minimalista - fácil de entender
+- ✅ Ideal para demonstrar conceitos DevOps sem complexidade excessiva
+- ✅ Boa documentação e grande comunidade
+- ✅ Fácil de containerizar
+
+**Alternativas consideradas:**
+- FastAPI (mais moderno, mas adiciona complexidade)
+- Django (muito pesado para o propósito)
+- Node.js/Express (boa opção, mas Python é mais comum em DevOps)
+
+## 2. Containerização (Docker)
+
+**Decisão:** Usar Docker multi-stage builds e Alpine base images
+
+**Razões:**
+- ✅ Imagens menores e mais seguras
+- ✅ Build otimizado com cache
+- ✅ Compatibilidade com Kubernetes
+- ✅ Padrão da indústria
+
+**Configurações importantes:**
+```dockerfile
+# Health checks nativos no Docker
+HEALTHCHECK --interval=30s --timeout=3s
+
+# Uso de gunicorn para produção (não Flask dev server)
+CMD ["gunicorn", "--bind", "0.0.0.0:5000"]
+```
+
+## 3. Orquestração (Kubernetes)
+
+**Decisão:** Kubernetes com Minikube para desenvolvimento local
+
+**Razões:**
+- ✅ Kubernetes é o padrão da indústria
+- ✅ Minikube permite desenvolvimento local sem custos
+- ✅ Demonstra conhecimento em orquestração de containers
+- ✅ Facilmente portável para clouds (EKS, GKE, AKS)
+
+**Features implementadas:**
+- Rolling updates com zero downtime
+- Health checks (liveness e readiness probes)
+- Auto-scaling horizontal (HPA)
+- ConfigMaps e Secrets
+- Resource limits
+
+## 4. CI/CD (GitHub Actions)
+
+**Decisão:** GitHub Actions para pipeline CI/CD
+
+**Razões:**
+- ✅ Integração nativa com GitHub
+- ✅ Gratuito para repositórios públicos
+- ✅ Sintaxe YAML clara e bem documentada
+- ✅ Marketplace com milhares de actions prontas
+
+**Pipeline implementado:**
+1. **Test** - Testes automatizados com pytest
+2. **Lint** - Qualidade de código com flake8 e black
+3. **Build** - Construção da imagem Docker
+4. **Security** - Scan de vulnerabilidades com Trivy
+5. **Deploy** - Deploy no Kubernetes (quando configurado)
+
+## 5. Monitoramento (Prometheus + Grafana)
+
+**Decisão:** Stack Prometheus + Grafana
+
+**Razões:**
+- ✅ Padrão CNCF para monitoramento
+- ✅ Integração nativa com Kubernetes
+- ✅ Grafana oferece visualizações poderosas
+- ✅ Open-source e amplamente utilizado
+
+**Métricas coletadas:**
+- Status de health dos pods
+- Uso de CPU e memória
+- Latência das requisições
+- Taxa de erros
+- Métricas customizadas da aplicação
+
+## 6. Logs (Estratégia estruturada)
+
+**Decisão:** Logs estruturados em JSON
+
+**Razões:**
+- ✅ Fácil de parsear e analisar
+- ✅ Compatível com ELK Stack ou Loki
+- ✅ Facilita troubleshooting
+- ✅ Melhor para agregação de logs
+
+## 7. Estratégia de Deploy
+
+**Decisão:** Rolling updates com health checks
+
+**Razões:**
+- ✅ Zero downtime
+- ✅ Rollback automático em caso de falha
+- ✅ Deploy gradual reduz riscos
+- ✅ Suportado nativamente pelo Kubernetes
+
+**Configuração:**
+```yaml
+strategy:
+  type: RollingUpdate
+  rollingUpdate:
+    maxSurge: 1        # Permite 1 pod extra durante update
+    maxUnavailable: 1  # Permite 1 pod indisponível
+```
+
+## 8. Segurança
+
+**Decisões de segurança implementadas:**
+
+1. **Scan de vulnerabilidades** com Trivy no CI/CD
+2. **Non-root user** nos containers
+3. **Resource limits** para evitar consumo excessivo
+4. **Health checks** para detectar falhas rapidamente
+5. **Secrets** separados de ConfigMaps
+
+## 9. Escalabilidade
+
+**Decisão:** HPA (Horizontal Pod Autoscaler)
+
+**Configuração:**
+- Min replicas: 2 (alta disponibilidade)
+- Max replicas: 10
+- Target CPU: 70%
+- Target Memory: 80%
+
+**Razões:**
+- ✅ Escala automaticamente baseado em métricas
+- ✅ Reduz custos em períodos de baixa demanda
+- ✅ Garante disponibilidade em picos de tráfego
+
+## 10. Infraestrutura como Código
+
+**Decisão:** Kubernetes YAML manifests
+
+**Razões:**
+- ✅ Versionável no Git
+- ✅ Reproduzível
+- ✅ Declarativo (descreve o estado desejado)
+- ✅ Fácil de revisar em PRs
+
+**Melhorias futuras:**
+- Considerar Helm para templates
+- Adicionar Terraform para infraestrutura cloud
+- Implementar GitOps com ArgoCD
+
+## 11. Testing Strategy
+
+**Decisão:** Testes em múltiplas camadas
+
+**Implementado:**
+1. **Unit tests** - Testa lógica individual
+2. **Integration tests** - Testa endpoints da API
+3. **Coverage** - Mínimo de 80% de cobertura
+
+**No CI/CD:**
+- Testes executam em cada push
+- Pipeline falha se testes não passarem
+- Relatório de cobertura gerado
+
+## 12. Observabilidade
+
+**Três pilares implementados:**
+
+1. **Logs** - Registro estruturado de eventos
+2. **Métricas** - Prometheus + Grafana
+3. **Traces** - (Próximo passo: implementar Jaeger)
+
+## Melhorias Futuras
+
+### Curto prazo:
+- [ ] Adicionar autenticação JWT
+- [ ] Implementar rate limiting
+- [ ] Adicionar banco de dados (PostgreSQL)
+- [ ] Configurar alertas no Grafana
+
+### Médio prazo:
+- [ ] Implementar GitOps com ArgoCD
+- [ ] Adicionar service mesh (Istio/Linkerd)
+- [ ] Implementar distributed tracing
+- [ ] Adicionar backup automatizado
+
+### Longo prazo:
+- [ ] Multi-region deployment
+- [ ] Disaster recovery
+- [ ] Chaos engineering tests
+- [ ] Advanced security scanning
+
+## Conclusão
+
+Estas decisões foram tomadas priorizando:
+1. **Simplicidade** - Fácil de entender e manter
+2. **Padrões da indústria** - Tecnologias amplamente adotadas
+3. **Demonstração de skills** - Mostra conhecimento DevOps
+4. **Escalabilidade** - Pronto para crescer
+5. **Manutenibilidade** - Código limpo e bem documentado
+
+Este projeto serve como base sólida para aprender e demonstrar conceitos DevOps fundamentais.

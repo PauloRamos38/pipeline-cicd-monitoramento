@@ -1,0 +1,132 @@
+from flask import Flask, jsonify, request
+from datetime import datetime
+import logging
+import os
+
+# Configuração de logs
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+app = Flask(__name__)
+
+# Simulação de banco de dados em memória
+tasks = []
+task_id_counter = 1
+
+@app.route('/')
+def home():
+    """Endpoint de health check"""
+    return jsonify({
+        'status': 'healthy',
+        'service': 'DevOps API',
+        'version': '1.0.0',
+        'timestamp': datetime.now().isoformat()
+    })
+
+@app.route('/health')
+def health():
+    """Health check para Kubernetes"""
+    return jsonify({'status': 'ok'}), 200
+
+@app.route('/ready')
+def ready():
+    """Readiness probe para Kubernetes"""
+    return jsonify({'status': 'ready'}), 200
+
+@app.route('/tasks', methods=['GET'])
+def get_tasks():
+    """Retorna todas as tarefas"""
+    logger.info(f"GET /tasks - Total de tarefas: {len(tasks)}")
+    return jsonify({
+        'tasks': tasks,
+        'total': len(tasks)
+    })
+
+@app.route('/tasks', methods=['POST'])
+def create_task():
+    """Cria uma nova tarefa"""
+    global task_id_counter
+    
+    data = request.get_json()
+    
+    if not data or 'title' not in data:
+        logger.warning("POST /tasks - Requisição inválida: title não fornecido")
+        return jsonify({'error': 'Title is required'}), 400
+    
+    task = {
+        'id': task_id_counter,
+        'title': data['title'],
+        'description': data.get('description', ''),
+        'completed': False,
+        'created_at': datetime.now().isoformat()
+    }
+    
+    tasks.append(task)
+    task_id_counter += 1
+    
+    logger.info(f"POST /tasks - Tarefa criada: {task['id']}")
+    return jsonify(task), 201
+
+@app.route('/tasks/<int:task_id>', methods=['GET'])
+def get_task(task_id):
+    """Retorna uma tarefa específica"""
+    task = next((t for t in tasks if t['id'] == task_id), None)
+    
+    if not task:
+        logger.warning(f"GET /tasks/{task_id} - Tarefa não encontrada")
+        return jsonify({'error': 'Task not found'}), 404
+    
+    logger.info(f"GET /tasks/{task_id} - Tarefa encontrada")
+    return jsonify(task)
+
+@app.route('/tasks/<int:task_id>', methods=['PUT'])
+def update_task(task_id):
+    """Atualiza uma tarefa"""
+    task = next((t for t in tasks if t['id'] == task_id), None)
+    
+    if not task:
+        logger.warning(f"PUT /tasks/{task_id} - Tarefa não encontrada")
+        return jsonify({'error': 'Task not found'}), 404
+    
+    data = request.get_json()
+    
+    if 'title' in data:
+        task['title'] = data['title']
+    if 'description' in data:
+        task['description'] = data['description']
+    if 'completed' in data:
+        task['completed'] = data['completed']
+    
+    task['updated_at'] = datetime.now().isoformat()
+    
+    logger.info(f"PUT /tasks/{task_id} - Tarefa atualizada")
+    return jsonify(task)
+
+@app.route('/tasks/<int:task_id>', methods=['DELETE'])
+def delete_task(task_id):
+    """Deleta uma tarefa"""
+    global tasks
+    
+    task = next((t for t in tasks if t['id'] == task_id), None)
+    
+    if not task:
+        logger.warning(f"DELETE /tasks/{task_id} - Tarefa não encontrada")
+        return jsonify({'error': 'Task not found'}), 404
+    
+    tasks = [t for t in tasks if t['id'] != task_id]
+    
+    logger.info(f"DELETE /tasks/{task_id} - Tarefa deletada")
+    return jsonify({'message': 'Task deleted successfully'}), 200
+
+@app.route('/metrics')
+def metrics():
+    """Métricas básicas para Prometheus"""
+    return jsonify({
+        'total_tasks': len(tasks),
+        'completed_tasks': len([t for t in tasks if t['completed']]),
+        'pending_tasks': len([t for t in tasks if not t['completed']])
+    })
+
+if __name__ == '__main__':
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port, debug=False)

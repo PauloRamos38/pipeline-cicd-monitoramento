@@ -1,0 +1,33 @@
+#!/bin/bash
+
+# Script para testes de carga na aplicação
+# Requer: Apache Bench (apt-get install apache2-utils)
+
+echo "==================================="
+echo "  Teste de Carga - DevOps API"
+echo "==================================="
+echo ""
+
+# URL da aplicação
+URL="http://localhost:5000"
+
+# Cores para output
+GREEN='\033[0;32m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+echo -e "${BLUE}1. Testando endpoint de health...${NC}"
+ab -n 1000 -c 10 $URL/health
+
+echo ""
+echo -e "${BLUE}2. Testando criação de tarefas...${NC}"
+ab -n 500 -c 10 -p task.json -T application/json $URL/tasks
+
+echo ""
+echo -e "${BLUE}3. Testando listagem de tarefas...${NC}"
+ab -n 2000 -c 50 $URL/tasks
+
+echo ""
+echo -e "${GREEN}Testes concluídos!${NC}"
+echo "Verifique as métricas em: $URL/metrics"
+echo "Dashboards Grafana: http://localhost:3000"

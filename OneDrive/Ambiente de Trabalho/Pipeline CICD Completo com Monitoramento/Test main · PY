@@ -1,0 +1,124 @@
+import pytest
+import sys
+import os
+
+# Adiciona o diretório app ao path
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+from main import app
+
+@pytest.fixture
+def client():
+    """Fixture para criar um cliente de teste"""
+    app.config['TESTING'] = True
+    with app.test_client() as client:
+        yield client
+
+def test_home(client):
+    """Testa o endpoint home"""
+    response = client.get('/')
+    assert response.status_code == 200
+    data = response.get_json()
+    assert data['status'] == 'healthy'
+    assert data['service'] == 'DevOps API'
+
+def test_health(client):
+    """Testa o health check"""
+    response = client.get('/health')
+    assert response.status_code == 200
+    data = response.get_json()
+    assert data['status'] == 'ok'
+
+def test_ready(client):
+    """Testa o readiness probe"""
+    response = client.get('/ready')
+    assert response.status_code == 200
+    data = response.get_json()
+    assert data['status'] == 'ready'
+
+def test_create_task(client):
+    """Testa a criação de uma tarefa"""
+    response = client.post('/tasks', json={
+        'title': 'Test Task',
+        'description': 'This is a test task'
+    })
+    assert response.status_code == 201
+    data = response.get_json()
+    assert data['title'] == 'Test Task'
+    assert data['completed'] == False
+
+def test_create_task_without_title(client):
+    """Testa criação de tarefa sem título"""
+    response = client.post('/tasks', json={
+        'description': 'No title'
+    })
+    assert response.status_code == 400
+    data = response.get_json()
+    assert 'error' in data
+
+def test_get_tasks(client):
+    """Testa obtenção de todas as tarefas"""
+    # Cria uma tarefa primeiro
+    client.post('/tasks', json={'title': 'Task 1'})
+    
+    response = client.get('/tasks')
+    assert response.status_code == 200
+    data = response.get_json()
+    assert 'tasks' in data
+    assert 'total' in data
+
+def test_get_task_by_id(client):
+    """Testa obtenção de uma tarefa por ID"""
+    # Cria uma tarefa
+    create_response = client.post('/tasks', json={'title': 'Task to Get'})
+    task_id = create_response.get_json()['id']
+    
+    # Busca a tarefa
+    response = client.get(f'/tasks/{task_id}')
+    assert response.status_code == 200
+    data = response.get_json()
+    assert data['title'] == 'Task to Get'
+
+def test_get_nonexistent_task(client):
+    """Testa busca de tarefa inexistente"""
+    response = client.get('/tasks/9999')
+    assert response.status_code == 404
+
+def test_update_task(client):
+    """Testa atualização de uma tarefa"""
+    # Cria uma tarefa
+    create_response = client.post('/tasks', json={'title': 'Original Title'})
+    task_id = create_response.get_json()['id']
+    
+    # Atualiza a tarefa
+    response = client.put(f'/tasks/{task_id}', json={
+        'title': 'Updated Title',
+        'completed': True
+    })
+    assert response.status_code == 200
+    data = response.get_json()
+    assert data['title'] == 'Updated Title'
+    assert data['completed'] == True
+
+def test_delete_task(client):
+    """Testa exclusão de uma tarefa"""
+    # Cria uma tarefa
+    create_response = client.post('/tasks', json={'title': 'Task to Delete'})
+    task_id = create_response.get_json()['id']
+    
+    # Deleta a tarefa
+    response = client.delete(f'/tasks/{task_id}')
+    assert response.status_code == 200
+    
+    # Verifica que a tarefa não existe mais
+    get_response = client.get(f'/tasks/{task_id}')
+    assert get_response.status_code == 404
+
+def test_metrics(client):
+    """Testa endpoint de métricas"""
+    response = client.get('/metrics')
+    assert response.status_code == 200
+    data = response.get_json()
+    assert 'total_tasks' in data
+    assert 'completed_tasks' in data
+    assert 'pending_tasks' in data
