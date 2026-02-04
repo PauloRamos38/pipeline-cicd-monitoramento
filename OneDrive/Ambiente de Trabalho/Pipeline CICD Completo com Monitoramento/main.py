@@ -8,16 +8,14 @@ from flask import Flask, request, jsonify
 from datetime import datetime
 import logging
 import os
+from logging_config import setup_logging, get_logger
 
 # Initialize Flask app
 app = Flask(__name__)
 
 # Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
-logger = logging.getLogger(__name__)
+setup_logging(app, level=os.getenv("LOG_LEVEL", "INFO"))
+logger = get_logger(__name__)
 
 # In-memory storage for tasks
 tasks = []
