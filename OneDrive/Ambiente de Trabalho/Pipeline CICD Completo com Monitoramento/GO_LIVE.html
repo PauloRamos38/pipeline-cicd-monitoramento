@@ -193,6 +193,15 @@
             background: #5a6268;
         }
         
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #218838;
+        }
+        
         .metrics-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -536,13 +545,16 @@
         <div class="card" style="margin-bottom: 30px;">
             <h2>⚙️ Próximos Passos</h2>
             <div class="button-group">
-                <button class="btn btn-primary" onclick="openGrafana()">📊 Abrir Grafana</button>
-                <button class="btn btn-primary" onclick="openPrometheus()">📈 Abrir Prometheus</button>
+                <button class="btn btn-primary" onclick="openGitHub()">📦 Repositório GitHub</button>
+                <button class="btn btn-primary" onclick="openDocker()">🐳 Docker Registry</button>
                 <button class="btn btn-secondary" onclick="copyCommand('docker-compose up -d')">📋 Docker Compose</button>
             </div>
             <div class="button-group" style="margin-top: 10px;">
                 <button class="btn btn-secondary" onclick="copyCommand('kubectl apply -f k8s/')">☸️ Deploy Kubernetes</button>
                 <button class="btn btn-secondary" onclick="copyCommand('python load_test_python.py')">⚡ Load Test</button>
+            </div>
+            <div class="button-group" style="margin-top: 10px;">
+                <button class="btn btn-success" onclick="openPublished()">🚀 Ver Release v1.0.0</button>
             </div>
         </div>
 
@@ -556,12 +568,16 @@
     </div>
 
     <script>
-        function openGrafana() {
-            window.open('http://localhost:3000', '_blank');
+        function openGitHub() {
+            window.open('https://github.com/PauloRamos38/pipeline-cicd-monitoramento', '_blank');
         }
         
-        function openPrometheus() {
-            window.open('http://localhost:9090', '_blank');
+        function openDocker() {
+            window.open('https://github.com/PauloRamos38/pipeline-cicd-monitoramento/pkgs/container/pipeline-cicd-monitoramento', '_blank');
+        }
+        
+        function openPublished() {
+            window.open('https://github.com/PauloRamos38/pipeline-cicd-monitoramento/releases/tag/v1.0.0', '_blank');
         }
         
         function copyCommand(command) {
