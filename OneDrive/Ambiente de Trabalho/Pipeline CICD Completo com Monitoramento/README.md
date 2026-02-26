@@ -223,7 +223,7 @@ Para detalhes completos, consulte:
 
 ## 👨‍💻 Autor
 
-PauloRamos38 - Projeto para estágio em DevOps
+Seu Nome - Projeto para estágio em DevOps
 
 ## 📝 Licença
 
