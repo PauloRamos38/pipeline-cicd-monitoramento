@@ -188,7 +188,7 @@ GO_LIVE.html - Dashboard interativo
 Status: ✅ PRONTO PARA PRODUÇÃO
 
 👨‍💻 Autor
-Seu Nome - Projeto para estágio em DevOps
+PauloRamos38 - Projeto para estágio em DevOps
 
 📝 Licença
 MIT License
