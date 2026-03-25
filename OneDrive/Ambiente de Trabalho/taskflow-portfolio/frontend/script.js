@@ -1,4 +1,7 @@
-const API_URL = "http://localhost:3000/tasks";
+const isLocalHost = ["localhost", "127.0.0.1"].includes(window.location.hostname);
+const API_URL = isLocalHost
+  ? "http://localhost:3000/tasks"
+  : `${window.location.origin}/tasks`;
 
 const state = {
   tasks: [],

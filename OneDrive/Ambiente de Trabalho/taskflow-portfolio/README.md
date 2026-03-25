@@ -7,6 +7,8 @@ Gerenciador de tarefas fullstack com frontend moderno (HTML, CSS e JavaScript pu
 - frontend: interface responsiva com dark mode, filtros e busca
 - backend: API REST com persistencia em arquivo JSON
 
+Obs: o backend tambem serve os arquivos estaticos do frontend em producao.
+
 ## Requisitos atendidos
 
 - Layout moderno e responsivo (mobile-first)
@@ -35,7 +37,8 @@ Gerenciador de tarefas fullstack com frontend moderno (HTML, CSS e JavaScript pu
 - [x] Filtros e busca por titulo
 - [x] Animacoes ao adicionar/remover
 - [x] Drag and drop com sincronizacao no backend
-- [ ] Publicacao no GitHub (executar comandos abaixo)
+- [x] Publicacao no GitHub
+- [ ] Deploy em nuvem (Render)
 
 ## Como rodar
 
@@ -57,6 +60,16 @@ Abra a pasta frontend no VS Code e inicie com Live Server (porta 5500).
 URL esperada:
 
 <http://127.0.0.1:5500/frontend/index.html>
+
+## Deploy (funcionando em algum lugar)
+
+### Render (backend + frontend em uma unica URL)
+
+1. No Render, crie um Web Service a partir do repositório.
+2. Configure Root Directory como `backend`.
+3. Build Command: `npm install`.
+4. Start Command: `npm start`.
+5. Deploy e abra a URL gerada (o frontend sera servido na raiz e a API em `/tasks`).
 
 ## Endpoints
 
