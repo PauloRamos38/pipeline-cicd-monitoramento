@@ -1,0 +1,70 @@
+name: Deploy Taskflow
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install backend dependencies
+        working-directory: ./backend
+        run: npm install
+
+      - name: Check backend syntax
+        working-directory: ./backend
+        run: node -c server.js
+
+      - name: Verify frontend files exist
+        run: |
+          ls -la frontend/
+          test -f frontend/index.html
+          test -f frontend/script.js
+          test -f frontend/style.css
+
+      - name: Build summary
+        run: |
+          echo "✅ Backend dependencies installed"
+          echo "✅ Server.js syntax valid"
+          echo "✅ Frontend files verified"
+          echo "🚀 Ready to deploy"
+
+      - name: Upload frontend artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: taskflow-frontend
+          path: frontend/
+          retention-days: 30
+
+  deploy:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Deploy message
+        run: |
+          echo "📦 Application built successfully"
+          echo "📁 Frontend: Ready for Vercel/Netlify/Render"
+          echo "🔌 Backend: Ready for deployment"
+          echo ""
+          echo "Next steps:"
+          echo "1. Connect repository to Render"
+          echo "2. Set root directory: backend"
+          echo "3. Build command: npm install"
+          echo "4. Start command: npm start"
