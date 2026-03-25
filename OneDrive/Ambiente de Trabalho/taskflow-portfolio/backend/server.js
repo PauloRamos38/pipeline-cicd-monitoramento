@@ -1,14 +1,26 @@
 const express = require("express");
 const cors = require("cors");
 const fs = require("fs/promises");
+const fsSync = require("fs");
 const path = require("path");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 const DB_PATH = path.join(__dirname, "tasks.json");
 
+// Resolve frontend path - funciona em local e em produção
+let FRONTEND_PATH = path.resolve(__dirname, "..", "frontend");
+// Se não existir, tenta o caminho relativo
+if (!fsSync.existsSync(FRONTEND_PATH)) {
+  FRONTEND_PATH = path.resolve(__dirname, "frontend");
+}
+
+console.log(`Frontend path: ${FRONTEND_PATH}`);
+console.log(`Server running at http://localhost:${PORT}`);
+
 app.use(cors());
 app.use(express.json());
+app.use(express.static(FRONTEND_PATH));
 
 app.get("/health", (req, res) => {
   res.json({ status: "ok", message: "Backend ativo." });
@@ -166,6 +178,22 @@ app.delete("/tasks/:id", async (req, res) => {
   }
 });
 
+app.use((req, res, next) => {
+  // Se é requisição para API, deixa passar
+  if (req.path.startsWith("/tasks") || req.path === "/health") {
+    return next();
+  }
+  // Caso contrário, serve o index.html (fallback para SPA)
+  const indexPath = path.join(FRONTEND_PATH, "index.html");
+  res.sendFile(indexPath, (err) => {
+    if (err) {
+      res.status(404).json({ error: "index.html not found", path: indexPath });
+    }
+  });
+});
+
 app.listen(PORT, () => {
-  console.log(`Servidor backend rodando em http://localhost:${PORT}`);
+  console.log(`🚀 API disponível em http://localhost:${PORT}/tasks`);
+  console.log(`🌐 Frontend servido em http://localhost:${PORT}`);
+  console.log(`✅ Servidor pronto para requisições`);
 });
