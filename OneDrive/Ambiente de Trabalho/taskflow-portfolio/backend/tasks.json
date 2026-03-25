@@ -1,0 +1,11 @@
+[
+  {
+    "id": "mn6gnvaxw0ez8",
+    "title": "Teste API",
+    "description": "Criada via terminal",
+    "priority": "media",
+    "dueDate": "2026-03-25",
+    "completed": false,
+    "createdAt": "2026-03-25T19:53:08.409Z"
+  }
+]

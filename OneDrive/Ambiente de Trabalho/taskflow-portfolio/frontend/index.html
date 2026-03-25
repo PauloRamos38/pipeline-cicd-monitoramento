@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Taskflow - Gerenciador de Tarefas</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWix+LLJAJ9/2e4lQeX4x0nE2l6KDAdAm8YGtS+wGGyRyvE4s46HoPazTA/gkGEXLJJLLQ==" crossorigin="anonymous" referrerpolicy="no-referrer">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <i class="fa-solid fa-layer-group"></i>
+        <h1>Taskflow</h1>
+      </div>
+      <p class="brand-subtitle">Gerencie sua rotina com foco.</p>
+      <nav class="nav-links" aria-label="Navegacao principal">
+        <a class="nav-link active" href="#tarefas"><i class="fa-solid fa-list-check"></i>Tarefas</a>
+        <a class="nav-link" href="#resumo"><i class="fa-solid fa-chart-simple"></i>Resumo</a>
+      </nav>
+      <button id="themeToggle" class="ghost-btn" type="button" aria-label="Alternar tema">
+        <i class="fa-solid fa-moon"></i>
+        <span>Modo escuro</span>
+      </button>
+    </aside>
+
+    <main class="content">
+      <header class="topbar" id="tarefas">
+        <div>
+          <p class="eyebrow">Painel de produtividade</p>
+          <h2>Gerenciador de Tarefas</h2>
+        </div>
+        <div class="counter-card" id="resumo">
+          <i class="fa-regular fa-hourglass-half"></i>
+          <div>
+            <span>Pendentes</span>
+            <strong id="pendingCount">0</strong>
+          </div>
+        </div>
+      </header>
+
+      <section class="panel form-panel">
+        <h3>Nova Tarefa</h3>
+        <form id="taskForm" novalidate>
+          <div class="field-group">
+            <label for="title">Titulo</label>
+            <input id="title" name="title" type="text" maxlength="80" placeholder="Ex: Preparar reuniao" required>
+          </div>
+          <div class="field-group">
+            <label for="description">Descricao</label>
+            <input id="description" name="description" type="text" maxlength="140" placeholder="Resumo curto da tarefa">
+          </div>
+          <div class="form-grid">
+            <div class="field-group">
+              <label for="priority">Prioridade</label>
+              <select id="priority" name="priority">
+                <option value="baixa">Baixa</option>
+                <option value="media" selected>Media</option>
+                <option value="alta">Alta</option>
+              </select>
+            </div>
+            <div class="field-group">
+              <label for="dueDate">Data</label>
+              <input id="dueDate" name="dueDate" type="date">
+            </div>
+          </div>
+          <div class="form-actions">
+            <button class="primary-btn" type="submit"><i class="fa-solid fa-plus"></i>Adicionar</button>
+            <button class="ghost-btn" id="exportBtn" type="button"><i class="fa-solid fa-file-export"></i>Exportar JSON</button>
+          </div>
+          <p class="feedback" id="formFeedback" aria-live="polite"></p>
+        </form>
+      </section>
+
+      <section class="panel">
+        <div class="toolbar">
+          <div class="search-wrap">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input id="searchInput" type="search" placeholder="Buscar por titulo">
+          </div>
+          <div class="filters" role="group" aria-label="Filtrar tarefas">
+            <button class="filter-btn active" data-filter="all" type="button">Todas</button>
+            <button class="filter-btn" data-filter="pending" type="button">Pendentes</button>
+            <button class="filter-btn" data-filter="done" type="button">Concluidas</button>
+          </div>
+        </div>
+
+        <ul id="taskList" class="task-list" aria-live="polite"></ul>
+        <p id="emptyState" class="empty-state">Nenhuma tarefa encontrada.</p>
+      </section>
+    </main>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
