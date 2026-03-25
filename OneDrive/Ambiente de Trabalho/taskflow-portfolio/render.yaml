@@ -3,17 +3,10 @@ services:
     name: taskflow-api
     runtime: node
     plan: free
-    buildCommand: cd backend && npm install
-    startCommand: cd backend && npm start
+    buildCommand: |
+      cd backend && npm install
+    startCommand: |
+      cd backend && npm start
     envVars:
       - key: NODE_ENV
         value: production
-      - key: PORT
-        value: 3000
-    routes:
-      - path: /
-        destination: /
-      - path: /tasks
-        destination: /tasks
-      - path: /tasks/*
-        destination: /tasks/*
